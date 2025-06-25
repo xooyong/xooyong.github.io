@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>xooyong blog</title>
-    <link>https://xooyong.github.io/</link>
-    <description>Recent content on xooyong blog</description>
+    <title>ML on xooyong blog</title>
+    <link>https://xooyong.github.io/tags/ml/</link>
+    <description>Recent content in ML on xooyong blog</description>
     <image>
       <title>xooyong blog</title>
       <url>https://xooyong.github.io/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
@@ -12,7 +12,7 @@
     <generator>Hugo -- 0.147.8</generator>
     <language>en</language>
     <lastBuildDate>Tue, 24 Jun 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://xooyong.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://xooyong.github.io/tags/ml/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>About Machine Learning</title>
       <link>https://xooyong.github.io/posts/2025-06/2025-06-24-about_machine_learning/</link>
@@ -30,13 +30,6 @@
 &lt;li&gt;Algorithm - Linear Regression, Tree, Graph, Neural Networks&amp;hellip;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;모델은 &lt;strong&gt;데이터&lt;/strong&gt;를 기반으로 학습한다. 데이터가 없다면 모델은 아무것도 할 수가 없다. 데이터의 품질, 양에 따라서 모델의 성능이 크게 좌우된다. 많은 양의 데이터도 중요하지만 데이터의 품질이 중요하다고 생각된다. 데이터가 품질이 좋고 해당되는 분야에 대해서 잘 표현되어 있다면 모델은 이를 통해 좋은 정보와 특징들을 학습하고 우리에게 원하는 답을 찾아 줄 것이다.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>My 1st post</title>
-      <link>https://xooyong.github.io/posts/2025-06/first/</link>
-      <pubDate>Tue, 15 Sep 2020 11:30:03 +0000</pubDate>
-      <guid>https://xooyong.github.io/posts/2025-06/first/</guid>
-      <description>Desc Text.</description>
     </item>
   </channel>
 </rss>
