@@ -18,18 +18,7 @@
       <link>https://xooyong.github.io/posts/2025-06/2025-06-24-about_machine_learning/</link>
       <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
       <guid>https://xooyong.github.io/posts/2025-06/2025-06-24-about_machine_learning/</guid>
-      <description>&lt;h2 id=&#34;1-machine-learning&#34;&gt;1. Machine Learning&lt;/h2&gt;
-&lt;p&gt;Machine Learning이란 뭘까? 1959년, 아서 사무엘은 ML을 이렇게 정의했다.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;기계가 일일이 코드로 명시하지 않은 동작을 데이터로부터 학습하여 실핼할 수 있도록 하는 알고리즘을 개발하는 연구 분야이다.&amp;quot;
-쉽게 말하면 기계가 스스로 학습하는 것이라고 할 수 있겠다. 그렇다면 기계는 어떤 것을 학습하고 어떻게 학습할 수 있을까? 먼저 학습을 하기 위해서 어떤 요소들이 필요한지 살펴보자.
-나는 기계가 학습하기 위해서, 크게 3가지 요소로 나누어 진다고 생각한다.&lt;/p&gt;&lt;/blockquote&gt;
-&lt;ol&gt;
-&lt;li&gt;Data&lt;/li&gt;
-&lt;li&gt;ML 개념 - Supervised Learning, Unsupervised Learning, Reinforcement Learning&amp;hellip;&lt;/li&gt;
-&lt;li&gt;Algorithm - Linear Regression, Tree, Graph, Neural Networks&amp;hellip;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;모델은 &lt;strong&gt;데이터&lt;/strong&gt;를 기반으로 학습한다. 데이터가 없다면 모델은 아무것도 할 수가 없다. 데이터의 품질, 양에 따라서 모델의 성능이 크게 좌우된다. 많은 양의 데이터도 중요하지만 데이터의 품질이 중요하다고 생각된다. 데이터가 품질이 좋고 해당되는 분야에 대해서 잘 표현되어 있다면 모델은 이를 통해 좋은 정보와 특징들을 학습하고 우리에게 원하는 답을 찾아 줄 것이다.&lt;/p&gt;</description>
+      <description>ML에 대한 나의 생각...</description>
     </item>
   </channel>
 </rss>
