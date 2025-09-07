@@ -14,11 +14,11 @@
     <lastBuildDate>Mon, 07 Jul 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://xooyong.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>From Tree to Forest</title>
-      <link>https://xooyong.github.io/posts/2025-07/2025-07-07-from-tree-to-forest/</link>
+      <title>Decision Tree</title>
+      <link>https://xooyong.github.io/posts/2025-07/2025-07-07-decision_tree/</link>
       <pubDate>Mon, 07 Jul 2025 00:00:00 +0000</pubDate>
-      <guid>https://xooyong.github.io/posts/2025-07/2025-07-07-from-tree-to-forest/</guid>
-      <description>Decision Tree부터 Ansemble까지</description>
+      <guid>https://xooyong.github.io/posts/2025-07/2025-07-07-decision_tree/</guid>
+      <description>Decision Tree</description>
     </item>
     <item>
       <title>About Machine Learning</title>
