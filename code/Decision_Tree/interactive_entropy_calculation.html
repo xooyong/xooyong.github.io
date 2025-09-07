@@ -505,7 +505,7 @@
             const coords = inverseTransform(x, y);
             
             // 클릭 위치에 따라 온도 또는 습도 분할 결정
-            if (Math.abs(x - 300) < Math.abs(y - 200)) {
+            if (Math.abs(x - 400) < Math.abs(y - 250)) {
                 // 세로 분할 (온도)
                 if (coords.temp >= 10 && coords.temp <= 40) {
                     const results = calculateInformationGain('temp', coords.temp);
