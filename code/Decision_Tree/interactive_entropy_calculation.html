@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Tree: Interactive Entropy & Information Gain</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+        .canvas-section {
+            flex: 2;
+        }
+        .info-section {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            height: fit-content;
+        }
+        canvas {
+            border: 2px solid #333;
+            border-radius: 5px;
+            cursor: crosshair;
+        }
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .entropy-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .calculation-steps {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 10px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 2px solid #333;
+        }
+        .split-line {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .best-split {
+            background: #c8e6c9;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌳 Interactive Decision Tree: Root Node 분할</h1>
+        
+        <div class="main-content">
+            <div class="canvas-section">
+                <canvas id="splitCanvas" width="600" height="400"></canvas>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ff6b6b;"></div>
+                        <span>운동 안함 (No)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #51cf66;"></div>
+                        <span>운동함 (Yes)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #333;"></div>
+                        <span>분할선</span>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button onclick="drawSplit('temperature')">온도로 분할 시도</button>
+                    <button onclick="drawSplit('humidity')">습도로 분할 시도</button>
+                    <button onclick="findBestSplit()">최적 분할 찾기</button>
+                    <button onclick="resetCanvas()">초기화</button>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="entropy-info">
+                    <h3>📊 Root Node 정보</h3>
+                    <div id="rootInfo"></div>
+                </div>
+                
+                <div id="splitInfo" style="display: none;">
+                    <div class="entropy-info">
+                        <h3>🌿 분할 결과</h3>
+                        <div id="splitResults"></div>
+                    </div>
+                    
+                    <div class="calculation-steps">
+                        <h4>🧮 IG 계산 과정</h4>
+                        <div id="calculationSteps"></div>
+                    </div>
+                </div>
+                
+                <div id="bestSplitInfo" style="display: none;">
+                    <div class="best-split">
+                        <h3>🏆 최적 분할</h3>
+                        <div id="bestSplitDetails"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('splitCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 데이터 포인트들 (온도, 습도, 클래스)
+        const dataPoints = [
+            {temp: 15, humidity: 80, exercise: 'No'},
+            {temp: 18, humidity: 75, exercise: 'No'},
+            {temp: 12, humidity: 90, exercise: 'No'},
+            {temp: 25, humidity: 85, exercise: 'No'},
+            {temp: 28, humidity: 90, exercise: 'No'},
+            {temp: 35, humidity: 80, exercise: 'No'},
+            {temp: 38, humidity: 85, exercise: 'No'},
+            {temp: 25, humidity: 40, exercise: 'Yes'},
+            {temp: 28, humidity: 35, exercise: 'Yes'},
+            {temp: 30, humidity: 45, exercise: 'Yes'},
+            {temp: 32, humidity: 30, exercise: 'Yes'},
+            {temp: 22, humidity: 50, exercise: 'Yes'},
+            {temp: 35, humidity: 40, exercise: 'Yes'},
+            {temp: 38, humidity: 35, exercise: 'Yes'}
+        ];
+
+        let currentSplit = null;
+        let bestSplitFound = null;
+        let animationActive = false;
+
+        function transformCoord(temp, humidity) {
+            const x = 50 + (temp - 10) * 500 / 30;
+            const y = 350 - (humidity - 20) * 300 / 80;
+            return {x, y};
+        }
+
+        function inverseTransform(x, y) {
+            const temp = 10 + (x - 50) * 30 / 500;
+            const humidity = 20 + (350 - y) * 80 / 300;
+            return {temp, humidity};
+        }
+
+        function calculateEntropy(labels) {
+            if (labels.length === 0) return 0;
+            
+            const counts = {};
+            labels.forEach(label => {
+                counts[label] = (counts[label] || 0) + 1;
+            });
+            
+            const total = labels.length;
+            let entropy = 0;
+            
+            for (const count of Object.values(counts)) {
+                if (count > 0) {
+                    const p = count / total;
+                    entropy -= p * Math.log2(p);
+                }
+            }
+            
+            return entropy;
+        }
+
+        function splitData(feature, threshold) {
+            const left = [];
+            const right = [];
+            
+            dataPoints.forEach(point => {
+                if (point[feature] < threshold) {
+                    left.push(point);
+                } else {
+                    right.push(point);
+                }
+            });
+            
+            return {left, right};
+        }
+
+        function calculateInformationGain(feature, threshold) {
+            const allLabels = dataPoints.map(p => p.exercise);
+            const parentEntropy = calculateEntropy(allLabels);
+            
+            const {left, right} = splitData(feature, threshold);
+            const leftLabels = left.map(p => p.exercise);
+            const rightLabels = right.map(p => p.exercise);
+            
+            const leftEntropy = calculateEntropy(leftLabels);
+            const rightEntropy = calculateEntropy(rightLabels);
+            
+            const total = dataPoints.length;
+            const leftWeight = left.length / total;
+            const rightWeight = right.length / total;
+            
+            const weightedEntropy = leftWeight * leftEntropy + rightWeight * rightEntropy;
+            const informationGain = parentEntropy - weightedEntropy;
+            
+            return {
+                informationGain,
+                parentEntropy,
+                leftEntropy,
+                rightEntropy,
+                leftCount: left.length,
+                rightCount: right.length,
+                leftLabels,
+                rightLabels
+            };
+        }
+
+        function drawBackground() {
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawAxes() {
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            
+            // X축, Y축
+            ctx.beginPath();
+            ctx.moveTo(50, 350);
+            ctx.lineTo(550, 350);
+            ctx.moveTo(50, 50);
+            ctx.lineTo(50, 350);
+            ctx.stroke();
+            
+            // 눈금 및 레이블
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            
+            // X축 눈금 (온도)
+            for(let temp = 10; temp <= 40; temp += 5) {
+                const pos = transformCoord(temp, 20);
+                ctx.fillText(temp + '°C', pos.x, 370);
+            }
+            
+            // Y축 눈금 (습도)
+            ctx.textAlign = 'right';
+            for(let humidity = 20; humidity <= 100; humidity += 20) {
+                const pos = transformCoord(10, humidity);
+                ctx.fillText(humidity + '%', 45, pos.y + 3);
+            }
+            
+            // 축 제목
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('온도 (Temperature)', 300, 390);
+            
+            ctx.save();
+            ctx.translate(25, 200);
+            ctx.rotate(-Math.PI/2);
+            ctx.fillText('습도 (Humidity)', 0, 0);
+            ctx.restore();
+        }
+
+        function drawDataPoints() {
+            dataPoints.forEach(point => {
+                const pos = transformCoord(point.temp, point.humidity);
+                
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 6, 0, 2 * Math.PI);
+                ctx.fillStyle = point.exercise === 'Yes' ? '#51cf66' : '#ff6b6b';
+                ctx.fill();
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+
+        function drawSplitLine(feature, threshold) {
+            ctx.strokeStyle = '#d32f2f';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 5]);
+            
+            if (feature === 'temp') {
+                const x = transformCoord(threshold, 20).x;
+                ctx.beginPath();
+                ctx.moveTo(x, 50);
+                ctx.lineTo(x, 350);
+                ctx.stroke();
+            } else if (feature === 'humidity') {
+                const y = transformCoord(10, threshold).y;
+                ctx.beginPath();
+                ctx.moveTo(50, y);
+                ctx.lineTo(550, y);
+                ctx.stroke();
+            }
+            
+            ctx.setLineDash([]);
+        }
+
+        function updateRootInfo() {
+            const allLabels = dataPoints.map(p => p.exercise);
+            const entropy = calculateEntropy(allLabels);
+            const yesCount = allLabels.filter(l => l === 'Yes').length;
+            const noCount = allLabels.filter(l => l === 'No').length;
+            
+            document.getElementById('rootInfo').innerHTML = `
+                <strong>총 데이터:</strong> ${dataPoints.length}개<br>
+                <strong>Yes:</strong> ${yesCount}개 (${(yesCount/dataPoints.length*100).toFixed(1)}%)<br>
+                <strong>No:</strong> ${noCount}개 (${(noCount/dataPoints.length*100).toFixed(1)}%)<br>
+                <strong>Entropy:</strong> ${entropy.toFixed(4)}
+            `;
+        }
+
+        function updateSplitInfo(feature, threshold, results) {
+            const leftYes = results.leftLabels.filter(l => l === 'Yes').length;
+            const leftNo = results.leftLabels.filter(l => l === 'No').length;
+            const rightYes = results.rightLabels.filter(l => l === 'Yes').length;
+            const rightNo = results.rightLabels.filter(l => l === 'No').length;
+            
+            document.getElementById('splitResults').innerHTML = `
+                <div class="split-line">분할: ${feature === 'temp' ? '온도' : '습도'} < ${threshold.toFixed(1)}</div>
+                <br>
+                <strong>L1 (Left):</strong> ${results.leftCount}개<br>
+                └ Yes: ${leftYes}개, No: ${leftNo}개<br>
+                └ Entropy: ${results.leftEntropy.toFixed(4)}<br>
+                <br>
+                <strong>L2 (Right):</strong> ${results.rightCount}개<br>
+                └ Yes: ${rightYes}개, No: ${rightNo}개<br>
+                └ Entropy: ${results.rightEntropy.toFixed(4)}
+            `;
+            
+            const leftWeight = results.leftCount / dataPoints.length;
+            const rightWeight = results.rightCount / dataPoints.length;
+            const weightedEntropy = leftWeight * results.leftEntropy + rightWeight * results.rightEntropy;
+            
+            document.getElementById('calculationSteps').innerHTML = `
+                1. 부모 엔트로피: ${results.parentEntropy.toFixed(4)}<br>
+                <br>
+                2. 가중 엔트로피 계산:<br>
+                   ${leftWeight.toFixed(3)} × ${results.leftEntropy.toFixed(4)} + 
+                   ${rightWeight.toFixed(3)} × ${results.rightEntropy.toFixed(4)}<br>
+                   = ${weightedEntropy.toFixed(4)}<br>
+                <br>
+                3. Information Gain:<br>
+                   ${results.parentEntropy.toFixed(4)} - ${weightedEntropy.toFixed(4)}<br>
+                   = <strong>${results.informationGain.toFixed(4)}</strong>
+            `;
+            
+            document.getElementById('splitInfo').style.display = 'block';
+        }
+
+        function drawSplit(feature) {
+            if (animationActive) return;
+            
+            resetCanvas();
+            
+            // 중간값으로 분할 시도
+            const values = dataPoints.map(p => p[feature === 'temperature' ? 'temp' : 'humidity']);
+            const minVal = Math.min(...values);
+            const maxVal = Math.max(...values);
+            const threshold = (minVal + maxVal) / 2;
+            
+            const featureKey = feature === 'temperature' ? 'temp' : 'humidity';
+            const results = calculateInformationGain(featureKey, threshold);
+            
+            drawSplitLine(featureKey, threshold);
+            updateSplitInfo(featureKey, threshold, results);
+            
+            currentSplit = {feature: featureKey, threshold, results};
+        }
+
+        async function findBestSplit() {
+            if (animationActive) return;
+            
+            animationActive = true;
+            resetCanvas();
+            
+            let bestGain = 0;
+            let bestSplit = null;
+            let bestResults = null;
+            
+            // 모든 가능한 분할 시도
+            const features = ['temp', 'humidity'];
+            const candidates = [];
+            
+            features.forEach(feature => {
+                const values = [...new Set(dataPoints.map(p => p[feature]))].sort((a, b) => a - b);
+                for (let i = 0; i < values.length - 1; i++) {
+                    const threshold = (values[i] + values[i + 1]) / 2;
+                    const results = calculateInformationGain(feature, threshold);
+                    candidates.push({feature, threshold, results});
+                    
+                    if (results.informationGain > bestGain) {
+                        bestGain = results.informationGain;
+                        bestSplit = {feature, threshold};
+                        bestResults = results;
+                    }
+                }
+            });
+            
+            // 애니메이션으로 후보들 보여주기
+            for (let i = 0; i < Math.min(candidates.length, 10); i++) {
+                const candidate = candidates[i];
+                
+                resetCanvas();
+                drawSplitLine(candidate.feature, candidate.threshold);
+                updateSplitInfo(candidate.feature, candidate.threshold, candidate.results);
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            // 최적 분할 표시
+            resetCanvas();
+            drawSplitLine(bestSplit.feature, bestSplit.threshold);
+            updateSplitInfo(bestSplit.feature, bestSplit.threshold, bestResults);
+            
+            document.getElementById('bestSplitDetails').innerHTML = `
+                <strong>Feature:</strong> ${bestSplit.feature === 'temp' ? '온도' : '습도'}<br>
+                <strong>Threshold:</strong> ${bestSplit.threshold.toFixed(1)}<br>
+                <strong>Information Gain:</strong> ${bestGain.toFixed(4)}<br>
+                <br>
+                이 분할이 가장 높은 Information Gain을 제공합니다!
+            `;
+            document.getElementById('bestSplitInfo').style.display = 'block';
+            
+            bestSplitFound = {bestSplit, bestResults};
+            animationActive = false;
+        }
+
+        function resetCanvas() {
+            drawBackground();
+            drawAxes();
+            drawDataPoints();
+            document.getElementById('splitInfo').style.display = 'none';
+            document.getElementById('bestSplitInfo').style.display = 'none';
+            currentSplit = null;
+        }
+
+        // 초기화
+        resetCanvas();
+        updateRootInfo();
+        
+        // 마우스 클릭으로 분할선 그리기 (옵션)
+        canvas.addEventListener('click', function(e) {
+            if (animationActive) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const coords = inverseTransform(x, y);
+            
+            // 클릭 위치에 따라 온도 또는 습도 분할 결정
+            if (Math.abs(x - 300) < Math.abs(y - 200)) {
+                // 세로 분할 (온도)
+                if (coords.temp >= 10 && coords.temp <= 40) {
+                    const results = calculateInformationGain('temp', coords.temp);
+                    resetCanvas();
+                    drawSplitLine('temp', coords.temp);
+                    updateSplitInfo('temp', coords.temp, results);
+                }
+            } else {
+                // 가로 분할 (습도)
+                if (coords.humidity >= 20 && coords.humidity <= 100) {
+                    const results = calculateInformationGain('humidity', coords.humidity);
+                    resetCanvas();
+                    drawSplitLine('humidity', coords.humidity);
+                    updateSplitInfo('humidity', coords.humidity, results);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
