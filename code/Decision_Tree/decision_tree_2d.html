@@ -69,7 +69,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌳 Decision Tree: 2D 기하학적 분할</h1>
+        <h1>🌳 Decision Tree: 기하학적 분할</h1>
         
         <div class="info">
             <h3>📊 데이터셋: 온도 vs 습도로 운동 여부 예측</h3>
@@ -269,10 +269,10 @@
         function updateStepInfo(step) {
             const info = document.getElementById('stepInfo');
             const messages = [
-                '<h3>🔍 전체 Decision Tree</h3><p>모든 분할 경계와 최종 분류 영역을 보여줍니다.</p>',
+                '<h3>🔍 전체 Decision Tree</h3><p>모든 분할 경계와 최종 분류 영역을 보여준다..</p>',
                 '<h3>1️⃣ 1단계: 온도로 분할</h3><p><strong>온도 < 25°C:</strong> 너무 추워서 운동 안함<br><strong>온도 ≥ 25°C:</strong> 적당한 온도, 추가 분할 필요</p>',
-                '<h3>2️⃣ 2단계: 습도로 세분화</h3><p><strong>온도 ≥ 25°C & 습도 ≥ 65%:</strong> 너무 습해서 운동 안함<br><strong>온도 ≥ 25°C & 습도 < 65%:</strong> 운동하기 좋은 조건!</p>',
-                '<h3>3️⃣ 최종 결과</h3><p>🔴 빨간 영역: 운동 안함<br>🟢 초록 영역: 운동함<br><br>Decision Tree가 2D 공간을 직사각형 영역들로 분할하는 것을 확인할 수 있습니다!</p>'
+                '<h3>2️⃣ 2단계: 습도로 세분화</h3><p><strong>온도 ≥ 25°C & 습도 ≥ 65%:</strong> 너무 습해서 운동 안함<br><strong>온도 ≥ 25°C & 습도 < 65%:</strong> 운동하기 좋은 조건.</p>',
+                '<h3>3️⃣ 최종 결과</h3><p>🔴 빨간 영역: 운동 안함<br>🟢 초록 영역: 운동함<br><br>Decision Tree가 2D 공간을 직사각형 영역들로 분할하는 것을 확인할 수 있다.</p>'
             ];
             info.innerHTML = messages[step];
         }
