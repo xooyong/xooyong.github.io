@@ -21,6 +21,13 @@
       <description>Decision Tree를 밑바닥부터 차근차근 알아보자...</description>
     </item>
     <item>
+      <title>Random Forest</title>
+      <link>https://xooyong.github.io/posts/2025-07/2025-07-12-random_forest/</link>
+      <pubDate>Mon, 07 Jul 2025 00:00:00 +0000</pubDate>
+      <guid>https://xooyong.github.io/posts/2025-07/2025-07-12-random_forest/</guid>
+      <description>Ensemble Learning</description>
+    </item>
+    <item>
       <title>About Machine Learning</title>
       <link>https://xooyong.github.io/posts/2025-06/2025-06-24-about_machine_learning/</link>
       <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
